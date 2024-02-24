@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.dark-card {
+  background-color: #2d3748;
+  color: white;
+}
