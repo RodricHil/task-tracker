@@ -12,9 +12,23 @@
         <p class="dark:text-gray-300">{{ task.description }}</p>
         <div class="mt-2 flex justify-end space-x-2">
           <button @click="editTask(task)" class="btn-primary">Edit</button>
-          <button @click="deleteTask(task.id)" class="btn-secondary">
+          <button
+            @click="showDeleteConfirmation(task.id)"
+            class="btn-secondary"
+          >
             Delete
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div v-if="showDeleteModal" class="modal">
+      <div class="modal-content">
+        <p>Are you sure you want to delete?</p>
+        <div class="modal-buttons">
+          <button @click="confirmDelete" class="btn-primary mr-2">Yes</button>
+          <button @click="cancelDelete" class="btn-secondary">Cancel</button>
         </div>
       </div>
     </div>
@@ -25,32 +39,61 @@
 export default {
   props: {
     tasks: Array,
+    darkMode: Boolean,
+  },
+  data() {
+    return {
+      showDeleteModal: false,
+      taskIdToDelete: null,
+    };
   },
   methods: {
     editTask(task) {
       this.$emit("editTask", task);
     },
-    deleteTask(taskId) {
-      this.$emit("deleteTask", taskId);
+    showDeleteConfirmation(taskId) {
+      this.taskIdToDelete = taskId;
+      this.showDeleteModal = true;
+    },
+    confirmDelete() {
+      this.$emit("deleteTask", this.taskIdToDelete);
+      this.hideDeleteConfirmation();
+    },
+    cancelDelete() {
+      this.hideDeleteConfirmation();
+    },
+    hideDeleteConfirmation() {
+      this.showDeleteModal = false;
+      this.taskIdToDelete = null;
     },
   },
 };
 </script>
 
 <style scoped>
-.dark [type="submit"] {
-  background-color: #1a202c !important;
+/* Add some basic styling for the modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.dark input::placeholder,
-.dark textarea::placeholder {
-  color: #cbd5e0;
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
 }
 
-.dark input:focus,
-.dark textarea:focus {
-  background-color: #2d3748;
-  border-color: #4a5568;
-  color: white;
+.modal-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
 }
 </style>
